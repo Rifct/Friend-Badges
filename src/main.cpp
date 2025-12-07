@@ -101,18 +101,23 @@ class $modify(MyCommentCell, CommentCell) {
             
             if (g_userList.find(accountID) != g_userList.end()) {
                 if (auto usernameMenu = this->getChildByIDRecursive("username-menu")) {
-                    
-                    if (auto percentageLabel = usernameMenu->getChildByID("percentage-label")) {
-                        percentageLabel->setZOrder(2);
-                    }
-                    
                     auto menuSprite = CCSprite::createWithSpriteFrameName("GJ_sFriendsIcon_001.png");
                     
                     if (menuSprite) {
                         menuSprite->setScale(0.6f);
                         menuSprite->setPosition(ccp(-60.0f, 0.0f));
-                        menuSprite->setZOrder(1);
-                        usernameMenu->addChild(menuSprite);
+                        
+                        if (auto percentageLabel = usernameMenu->getChildByID("percentage-label")) {
+                            usernameMenu->insertBefore(menuSprite, percentageLabel);
+                        }
+
+                        else if (auto modBadge = usernameMenu->getChildByID("mod-badge")) {
+                            usernameMenu->insertBefore(menuSprite, modBadge);
+                        }
+
+                        else {
+                            usernameMenu->addChild(menuSprite);
+                        }
                     }
                 }
             }
