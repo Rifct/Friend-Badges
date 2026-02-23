@@ -35,11 +35,13 @@ class $modify(MenuLayer) {
         req.header("Content-Type", "application/x-www-form-urlencoded");
         
         std::string url = "http://www.boomlings.com/database/getGJUserList20.php";
+
+        auto listener = new async::TaskHolder<web::WebResponse>;
         
-        auto listener = new EventListener<web::WebTask>;
-        listener->bind([] (web::WebTask::Event* e) {
-            if (web::WebResponse* value = e->getValue()) {
-                std::string response = value->string().unwrapOr("");
+        listener->spawn(
+            req.post(url),
+            [](web::WebResponse value) {
+                std::string response = value.string().unwrapOr("");
 
                 g_userList.clear();
                 
@@ -61,10 +63,8 @@ class $modify(MenuLayer) {
                 
                 g_userListLoaded = true;
             }
-        });
-        
-        listener->setFilter(req.post(url));
-        
+        );
+
         return true;
     }
 };
@@ -118,6 +118,8 @@ class $modify(MyCommentCell, CommentCell) {
                         else {
                             usernameMenu->addChild(menuSprite);
                         }
+
+                        usernameMenu->updateLayout();
                     }
                 }
             }
