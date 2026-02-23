@@ -35,11 +35,10 @@ class $modify(MenuLayer) {
         req.header("Content-Type", "application/x-www-form-urlencoded");
         
         std::string url = "http://www.boomlings.com/database/getGJUserList20.php";
-        
-        async::TaskHolder<web::WebResponse> listener;
 
-        log::debug("wa");
-        listener.spawn(
+        auto listener = new async::TaskHolder<web::WebResponse>;
+        
+        listener->spawn(
             req.post(url),
             [](web::WebResponse value) {
                 std::string response = value.string().unwrapOr("");
@@ -65,7 +64,7 @@ class $modify(MenuLayer) {
                 g_userListLoaded = true;
             }
         );
-        
+
         return true;
     }
 };
@@ -119,6 +118,8 @@ class $modify(MyCommentCell, CommentCell) {
                         else {
                             usernameMenu->addChild(menuSprite);
                         }
+
+                        usernameMenu->updateLayout();
                     }
                 }
             }
